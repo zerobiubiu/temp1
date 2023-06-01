@@ -1,4 +1,4 @@
-const { processDataFile } = require('./data');
+const { processID_SSD_Deal, processID_SSDM_Deal } = require('./data');
 const Client = require('ssh2-sftp-client');
 
 const sftp = new Client();
@@ -61,12 +61,10 @@ function handleNewFiles(files) {
                     case 'ID_SMP':
                         break;
                     case 'ID_SSD':
-                        processDataFile(localDirPath + file.name)
-                            .catch(error => {
-                                console.error(error);
-                            });
+                        setTimeout(() => processID_SSD_Deal(localDirPath + file.name), 3000);
                         break;
                     case 'ID_SSDM':
+                        setTimeout(() => processID_SSDM_Deal(localDirPath + file.name), 3000);
                         break;
                     case 'ID_SSD_KOJYO':
                         break;
@@ -79,6 +77,7 @@ function handleNewFiles(files) {
                     case 'ID_SSDPROG_YOT':
                         break;
                     default:
+                        console.log("未知文件");
                         break;
                 }
             }

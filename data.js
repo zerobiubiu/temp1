@@ -11,7 +11,7 @@ function convertToUTCDate(dateStr) {
 }
 
 // 处理数据文件
-function processDataFile(path) {
+function processID_SSD_Deal(path) {
     const results = [];
 
     const csvString = fs.readFileSync(path, 'utf-8');
@@ -56,24 +56,69 @@ function processDataFile(path) {
 
             axios(config)
                 .then(response => {
-                    // console.log(JSON.stringify(response.data));
+                    console.log(JSON.stringify(response.data));
                 })
                 .catch(error => {
                     console.log(error);
                 });
         });
     });
+}
 
-    return new Promise((resolve, reject) => {
-        csvStream.on('finish', () => {
-            resolve();
-        });
-        csvStream.on('error', error => {
-            reject(error);
+function processID_SSDM_Deal(path) {
+    const results = [];
+
+    const csvString = fs.readFileSync(path, 'utf-8');
+
+    const csvStream = csv.parseString(csvString, { headers: false });
+    csvStream.on('data', data => {
+        results.push(data);
+    });
+
+    csvStream.on('end', () => {
+        results.forEach(line => {
+            const data = {
+                data: {
+                    _widget_1685598573914: { value: line[0] },
+                    _widget_1685598573912: {
+                        value: [
+                            {
+                                _widget_1685598573915: { value: line[1] + line[3] },
+                                _widget_1685598573916: { value: line[2] },
+                                _widget_1685598573917: { value: line[4] }
+                            }
+                        ]
+                    }
+                },
+                is_start_workflow: true,
+                is_start_trigger: true
+            };
+
+            const config = {
+                method: 'post',
+                url: 'https://api.jiandaoyun.com/api/v4/app/612613ce863d82000717504f/entry/6478316df3f50400082f425b/data_create',
+                headers: {
+                    Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                    'Content-Type': 'application/json',
+                    Accept: '*/*',
+                    Host: 'api.jiandaoyun.com',
+                    Connection: 'keep-alive'
+                },
+                data
+            };
+
+            axios(config)
+                .then(response => {
+                    console.log(JSON.stringify(response.data));
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         });
     });
 }
 
 module.exports = {
-    processDataFile
+    processID_SSD_Deal,
+    processID_SSDM_Deal
 };
