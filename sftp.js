@@ -1,5 +1,5 @@
+const { processDataFile } = require('./data');
 const Client = require('ssh2-sftp-client');
-const fs = require('fs');
 
 const sftp = new Client();
 
@@ -45,11 +45,14 @@ function handleNewFiles(files) {
     files.forEach(file => {
         if (!fileCache.includes(file.name)) {
             fileCache.push(file.name);
+            console.log(file.name);
+
             sftp.get(remoteDirPath + file.name, localDirPath + file.name);
+
             const lastIndex = file.name.lastIndexOf('_');
             if (lastIndex !== -1) {
                 const dataInterface = file.name.substring(0, lastIndex);
-                console.log(dataInterface);
+
                 switch (dataInterface) {
                     case 'IM_ISP':
                         break;

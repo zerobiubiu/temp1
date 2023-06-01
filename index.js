@@ -1,5 +1,4 @@
 const { connectToSFTP, executeProgram } = require('./sftp');
-const { processDataFile } = require('./data');
 
 // 连接到SFTP服务器
 connectToSFTP()
