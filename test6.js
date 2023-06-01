@@ -39,17 +39,18 @@ function convertToUTCDate(dateStr) {
 }
 
 function ID_SSD_Deal(Path) {
+    // console.log(Path);
     const results = []; // 存储处理后的数据
-
-    fs.createReadStream(Path)
-        .pipe(csv.parse({ headers: false }))
+    const csvString = fs.readFileSync(Path, 'utf-8');
+    csv
+        .parseString(csvString, { headers: false })
         .on('data', (data) => {
             // 处理每一行数据
             results.push(data);
         })
         .on('end', () => {
-            // CSV文件解析完成
             results.forEach(Line => {
+                console.log(Line);
                 const data = {
                     data: {
                         _widget_1685584989914: { value: Line[0] },
@@ -86,10 +87,60 @@ function ID_SSD_Deal(Path) {
                         console.log(error);
                     });
             })
-        })
-        .on('error', (error) => {
-            console.error('读取CSV文件时发生错误:', error);
         });
+
+    // fs.createReadStream(Path)
+    //     .pipe(csv.parse({ headers: false }))
+    //     .on('data', (data) => {
+    //         // 处理每一行数据
+    //         results.push(data);
+    //     })
+    //     .on('end', () => {
+    //         // CSV文件解析完成
+    //         console.log(results);
+
+    //         results.forEach(Line => {
+    //             console.log(Line);
+    //             const data = {
+    //                 data: {
+    //                     _widget_1685584989914: { value: Line[0] },
+    //                     _widget_1685584989915: { value: convertToUTCDate(Line[2]) },
+    //                     _widget_1685584989916: { value: Line[5] },
+    //                     _widget_1685584989918: { value: Line[7] },
+    //                     _widget_1685584989919: { value: Line[12] },
+    //                     _widget_1685584989920: { value: Line[13] },
+    //                     _widget_1685584989921: { value: Line[17] },
+    //                     _widget_1685584989926: { value: Line[19] },
+    //                     _widget_1685584989928: { value: Line[27] },
+    //                     _widget_1685584989930: { value: convertToUTCDate(Line[29]) }
+    //                 },
+    //                 is_start_workflow: true,
+    //                 is_start_trigger: true
+    //             };
+    //             const config = {
+    //                 method: 'post',
+    //                 url: 'https://api.jiandaoyun.com/api/v4/app/612613ce863d82000717504f/entry/6477fc5d266775000815b118/data_create',
+    //                 headers: {
+    //                     Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+    //                     'Content-Type': 'application/json',
+    //                     Accept: '*/*',
+    //                     Host: 'api.jiandaoyun.com',
+    //                     Connection: 'keep-alive'
+    //                 },
+    //                 data
+    //             };
+    //             axios(config)
+    //                 .then((response) => {
+    //                     console.log(JSON.stringify(response.data));
+    //                 })
+    //                 .catch((error) => {
+    //                     console.log(error);
+    //                 });
+    //         })
+    //     })
+    //     .on('error', (error) => {
+    //         console.error('读取CSV文件时发生错误:', error);
+    //     });
 
 }
 
@@ -114,6 +165,7 @@ function checkDirectoryChanges() {
                             case 'ID_SMP':
                                 break;
                             case 'ID_SSD':
+                                // console.log(file.name);
                                 ID_SSD_Deal(localDirPath + file.name);
                                 break;
                             case 'ID_SSDM':
