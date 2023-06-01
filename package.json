@@ -1,0 +1,21 @@
+{
+  "name": "csv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "fs": "^0.0.1-security",
+    "mysql": "^2.18.1",
+    "node-ssh": "^13.1.0",
+    "ssh2-sftp-client": "^9.1.0",
+    "typescript": "^5.0.4",
+    "xlsx-populate": "^1.21.0"
+  }
+}
