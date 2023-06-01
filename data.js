@@ -66,28 +66,60 @@ function processID_SSD_Deal(path) {
 }
 
 function processID_SSDM_Deal(path) {
-    const results = [];
 
-    const csvString = fs.readFileSync(path, 'utf-8');
 
-    const csvStream = csv.parseString(csvString, { headers: false });
-    csvStream.on('data', data => {
-        results.push(data);
-    });
+    function convertCsvToJson(csvFilePath, callback) {
+        const jsonData = {};
 
-    csvStream.on('end', () => {
-        results.forEach(line => {
+        fs.createReadStream(csvFilePath)
+            .pipe(csv.parse({ headers: false }))
+            .on('data', (data) => {
+                const key = data[0];
+                const restFields = data.slice(1);
+
+                if (jsonData.hasOwnProperty(key)) {
+                    jsonData[key].push(restFields);
+                } else {
+                    jsonData[key] = [restFields];
+                }
+            })
+            .on('end', () => {
+                callback(null, jsonData);
+            })
+            .on('error', (error) => {
+                callback(error);
+            });
+    }
+
+    function splitAndRecombineValues(jsonData) {
+        var buffer = [];
+        for (const key in jsonData) {
+            const rows = jsonData[key];
+            rows.forEach((line) => {
+                buffer.push({
+                    _widget_1685598573915: { value: line[0] + line[2] },
+                    _widget_1685598573916: { value: line[1] },
+                    _widget_1685598573917: { value: line[3] }
+                })
+            });
+        }
+        return buffer;
+    }
+
+    convertCsvToJson(path, (error, JsonData) => {
+        if (error) {
+            console.error('无法将 CSV 文件转换为 JSON:', error);
+            return;
+        }
+
+        Object.entries(JsonData).map(([key, value]) => {
+            const line = { [key]: value };
+            const keys = Object.keys(line);
             const data = {
                 data: {
-                    _widget_1685598573914: { value: line[0] },
+                    _widget_1685598573914: { value: keys[0] },
                     _widget_1685598573912: {
-                        value: [
-                            {
-                                _widget_1685598573915: { value: line[1] + line[3] },
-                                _widget_1685598573916: { value: line[2] },
-                                _widget_1685598573917: { value: line[4] }
-                            }
-                        ]
+                        value: splitAndRecombineValues(line)
                     }
                 },
                 is_start_workflow: true,

@@ -90,9 +90,11 @@ function handleDeletedFiles(files) {
     fileCache.forEach(file => {
         if (!files.find(f => f.name === file)) {
             fileCache = fileCache.filter(f => f !== file);
+            console.log("删除" + file);
         }
     });
 }
+
 
 // 定期检查目录变动
 function checkDirectoryChanges() {
