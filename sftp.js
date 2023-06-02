@@ -11,7 +11,7 @@ const config = {
 };
 
 // 监听的远程目录路径
-const remoteDirPath = './send/';
+const remoteDirPath = './receive/';
 const localDirPath = './client_file/';
 
 // 用于存储已检测到的文件列表
