@@ -150,7 +150,422 @@ function processID_SSDM_Deal(path) {
     });
 }
 
+function processIM_ISP(path) {
+    const results = [];
+    const csvString = fs.readFileSync(path, 'utf-8');
+    const csvStream = csv.parseString(csvString, { headers: false });
+
+    csvStream.on('data', data => {
+        results.push(data);
+    });
+    csvStream.on('end', () => {
+        const data = {
+            "data_list": results.map(row => {
+                const widget = {};
+                row.forEach((value, index) => {
+                    widget["_widget_168671266992" + index] = {
+                        "value": value
+                    };
+                });
+                return widget;
+            })
+        };
+
+        const config = {
+            method: 'post',
+            url: 'https://api.jiandaoyun.com/api/v1/app/612613ce863d82000717504f/entry/6489315d3036570008175d93/data_batch_create',
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: '*/*',
+                Host: 'api.jiandaoyun.com',
+                Connection: 'keep-alive'
+            },
+            data
+        };
+
+        axios(config)
+            .then(response => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+}
+
+function processIM_KOJYO(path) {
+    const results = [];
+    const csvString = fs.readFileSync(path, 'utf-8');
+    const csvStream = csv.parseString(csvString, { headers: false });
+
+    csvStream.on('data', data => {
+        results.push(data);
+    });
+    csvStream.on('end', () => {
+        const data = {
+            "data_list": results.map(row => {
+                const widget = {};
+                row.forEach((value, index) => {
+                    widget["_widget_168672210053" + (index + 1)] = {
+                        "value": value
+                    };
+                });
+                return widget;
+            })
+        };
+
+        const config = {
+            method: 'post',
+            url: 'https://api.jiandaoyun.com/api/v1/app/612613ce863d82000717504f/entry/648956342e6170000738d891/data_batch_create',
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: '*/*',
+                Host: 'api.jiandaoyun.com',
+                Connection: 'keep-alive'
+            },
+            data
+        };
+
+        axios(config)
+            .then(response => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+}
+
+function processID_SMP(path) {
+    const results = [];
+    const csvString = fs.readFileSync(path, 'utf-8');
+    const csvStream = csv.parseString(csvString, { headers: false });
+
+    csvStream.on('data', data => {
+        const json = {
+            "_widget_1686722540825": { "value": data[0] },
+            "_widget_1686722540826": { "value": data[1] },
+            "_widget_1686722540827": { "value": data[2] },
+            "_widget_1686722540828": { "value": data[3] },
+            "_widget_1686722540829": { "value": data[4] },
+            "_widget_1686722540830": { "value": data[5] },
+            "_widget_1686722540831": { "value": data[6] },
+            "_widget_1686722540832": { "value": data[7] },
+            "_widget_1686722540833": { "value": convertToUTCDate(data[8]) },
+            "_widget_1686722540834": { "value": data[9] },
+            "_widget_1686722540835": { "value": data[10] },
+            "_widget_1686722540836": { "value": data[11] },
+            "_widget_1686722540837": { "value": data[12] },
+            "_widget_1686722540838": { "value": data[13] },
+            "_widget_1686722540839": { "value": data[14] },
+            "_widget_1686722540840": { "value": data[15] },
+            "_widget_1686722540841": { "value": data[16] },
+            "_widget_1686722540842": { "value": data[17] }
+        };
+
+        results.push(json);
+    });
+
+    csvStream.on('end', () => {
+        const data = {
+            "data_list": results
+        };
+        const config = {
+            method: 'post',
+            url: 'https://api.jiandaoyun.com/api/v1/app/612613ce863d82000717504f/entry/648957ec03a020000810c99b/data_batch_create',
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: '*/*',
+                Host: 'api.jiandaoyun.com',
+                Connection: 'keep-alive'
+            },
+            data
+        };
+
+        axios(config)
+            .then(response => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+}
+
+function processID_SSD_KOJYO(path){
+    const results = [];
+    const csvString = fs.readFileSync(path, 'utf-8');
+    const csvStream = csv.parseString(csvString, { headers: false });
+
+    csvStream.on('data', data => {
+        results.push(data);
+    });
+    csvStream.on('end', () => {
+        const data = {
+            "data_list": results.map(row => {
+                const widget = {};
+                row.forEach((value, index) => {
+                    widget["_widget_168672375047" + (index + 5)] = {
+                        "value": value
+                    };
+                });
+                return widget;
+            })
+        };
+
+        const config = {
+            method: 'post',
+            url: 'https://api.jiandaoyun.com/api/v1/app/612613ce863d82000717504f/entry/64895ca61d364700085a048f/data_batch_create',
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: '*/*',
+                Host: 'api.jiandaoyun.com',
+                Connection: 'keep-alive'
+            },
+            data
+        };
+
+        axios(config)
+            .then(response => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+}
+
+function processID_SSD_ISP(path){
+    const results = [];
+    const csvString = fs.readFileSync(path, 'utf-8');
+    const csvStream = csv.parseString(csvString, { headers: false });
+
+    csvStream.on('data', data => {
+        results.push(data);
+    });
+    csvStream.on('end', () => {
+        const data = {
+            "data_list": results.map(row => {
+                const widget = {};
+                row.forEach((value, index) => {
+                    widget["_widget_168672432830" + (index + 0)] = {
+                        "value": value
+                    };
+                });
+                return widget;
+            })
+        };
+
+        const config = {
+            method: 'post',
+            url: 'https://api.jiandaoyun.com/api/v1/app/612613ce863d82000717504f/entry/64895ee72d40e6000804e1d7/data_batch_create',
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: '*/*',
+                Host: 'api.jiandaoyun.com',
+                Connection: 'keep-alive'
+            },
+            data
+        };
+
+        axios(config)
+            .then(response => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+}
+
+function processID_SMP_CMT(path){
+    const results = [];
+    const csvString = fs.readFileSync(path, 'utf-8');
+    const csvStream = csv.parseString(csvString, { headers: false });
+
+    csvStream.on('data', data => {
+        results.push(data);
+    });
+    csvStream.on('end', () => {
+        const data = {
+            "data_list": results.map(row => {
+                const widget = {};
+                row.forEach((value, index) => {
+                    widget["_widget_168672468568" + (index + 6)] = {
+                        "value": value
+                    };
+                });
+                return widget;
+            })
+        };
+
+        const config = {
+            method: 'post',
+            url: 'https://api.jiandaoyun.com/api/v1/app/612613ce863d82000717504f/entry/6489604d77eb9d0008cccda1/data_batch_create',
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: '*/*',
+                Host: 'api.jiandaoyun.com',
+                Connection: 'keep-alive'
+            },
+            data
+        };
+
+        axios(config)
+            .then(response => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+}
+
+function processID_SSD_CMT(path){
+    const results = [];
+    const csvString = fs.readFileSync(path, 'utf-8');
+    const csvStream = csv.parseString(csvString, { headers: false });
+
+    csvStream.on('data', data => {
+        results.push(data);
+    });
+    csvStream.on('end', () => {
+        const data = {
+            "data_list": results.map(row => {
+                const widget = {};
+                row.forEach((value, index) => {
+                    widget["_widget_168672493471" + (index + 7)] = {
+                        "value": value
+                    };
+                });
+                return widget;
+            })
+        };
+
+        const config = {
+            method: 'post',
+            url: 'https://api.jiandaoyun.com/api/v1/app/612613ce863d82000717504f/entry/648961445e413f00071f6e19/data_batch_create',
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: '*/*',
+                Host: 'api.jiandaoyun.com',
+                Connection: 'keep-alive'
+            },
+            data
+        };
+
+        axios(config)
+            .then(response => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+}
+
+function processID_SMPPROG_YOT(path){
+    const results = [];
+    const csvString = fs.readFileSync(path, 'utf-8');
+    const csvStream = csv.parseString(csvString, { headers: false });
+
+    csvStream.on('data', data => {
+        const json = {
+            "_widget_1686726286595": { "value": data[0] },
+            "_widget_1686726286596": { "value": data[1] },
+            "_widget_1686726286597": { "value": data[2] },
+            "_widget_1686726286598": { "value": convertToUTCDate(data[3]) }
+        };
+
+        results.push(json);
+    });
+
+    csvStream.on('end', () => {
+        const data = {
+            "data_list": results
+        };
+        const config = {
+            method: 'post',
+            url: 'https://api.jiandaoyun.com/api/v1/app/612613ce863d82000717504f/entry/6489668e77eb9d0008d2cccd/data_batch_create',
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: '*/*',
+                Host: 'api.jiandaoyun.com',
+                Connection: 'keep-alive'
+            },
+            data
+        };
+
+        axios(config)
+            .then(response => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+}
+
+function processID_SSDPROG_YOT(path){
+    const results = [];
+    const csvString = fs.readFileSync(path, 'utf-8');
+    const csvStream = csv.parseString(csvString, { headers: false });
+
+    csvStream.on('data', data => {
+        const json = {
+            "_widget_1686726725078": { "value": data[0] },
+            "_widget_1686726725079": { "value": data[1] },
+            "_widget_1686726725080": { "value": convertToUTCDate(data[2]) }
+        };
+
+        results.push(json);
+    });
+
+    csvStream.on('end', () => {
+        const data = {
+            "data_list": results
+        };
+        const config = {
+            method: 'post',
+            url: 'https://api.jiandaoyun.com/api/v1/app/612613ce863d82000717504f/entry/648968449bee8400080f800d/data_batch_create',
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: '*/*',
+                Host: 'api.jiandaoyun.com',
+                Connection: 'keep-alive'
+            },
+            data
+        };
+
+        axios(config)
+            .then(response => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+}
+
 module.exports = {
     processID_SSD_Deal,
-    processID_SSDM_Deal
+    processID_SSDM_Deal,
+    processIM_ISP,
+    processIM_KOJYO,
+    processID_SMP,
+    processID_SSD_KOJYO,
+    processID_SSD_ISP,
+    processID_SMP_CMT,
+    processID_SSD_CMT,
+    processID_SMPPROG_YOT,
+    processID_SSDPROG_YOT
 };

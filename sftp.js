@@ -1,5 +1,6 @@
-const { processID_SSD_Deal, processID_SSDM_Deal } = require('./data');
+// const { processID_SSD_Deal, processID_SSDM_Deal, processIM_ISP, processIM_KOJYO, processID_SMP, processID_SSD_KOJYO } = require('./data');
 const Client = require('ssh2-sftp-client');
+const data_processing = require('./data');
 
 const sftp = new Client();
 
@@ -55,26 +56,37 @@ function handleNewFiles(files) {
 
                 switch (dataInterface) {
                     case 'IM_ISP':
+                        setTimeout(() => data_processing.processIM_ISP(localDirPath + file.name), 3000);
                         break;
                     case 'IM_KOJYO':
+                        setTimeout(() => data_processing.processIM_KOJYO(localDirPath + file.name), 3000);
                         break;
                     case 'ID_SMP':
+                        setTimeout(() => data_processing.processID_SMP(localDirPath + file.name), 3000);
                         break;
                     case 'ID_SSD':
-                        setTimeout(() => processID_SSD_Deal(localDirPath + file.name), 3000);
+                        setTimeout(() => data_processing.processID_SSD_Deal(localDirPath + file.name), 3000);
                         break;
                     case 'ID_SSDM':
-                        setTimeout(() => processID_SSDM_Deal(localDirPath + file.name), 3000);
+                        setTimeout(() => data_processing.processID_SSDM_Deal(localDirPath + file.name), 3000);
                         break;
                     case 'ID_SSD_KOJYO':
+                        setTimeout(() => data_processing.processID_SSD_KOJYO(localDirPath + file.name), 3000);
                         break;
                     case 'ID_SSD_ISP':
+                        setTimeout(()=>data_processing.processID_SSD_ISP(localDirPath + file.name),3000);
                         break;
                     case 'ID_SMP_CMT':
+                        setTimeout(()=>data_processing.processID_SMP_CMT(localDirPath + file.name),3000);
+                        break;
+                    case 'ID_SSD_CMT':
+                        setTimeout(()=>data_processing.processID_SSD_CMT(localDirPath + file.name),3000);
                         break;
                     case 'ID_SMPPROG_YOT':
+                        setTimeout(()=>data_processing.processID_SMPPROG_YOT(localDirPath + file.name),3000);
                         break;
                     case 'ID_SSDPROG_YOT':
+                        setTimeout(()=>data_processing.processID_SSDPROG_YOT(localDirPath + file.name),3000);
                         break;
                     default:
                         console.log("未知文件");
