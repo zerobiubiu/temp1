@@ -59,13 +59,30 @@ async function startInterval() {
     console.log(now + "  启动数据推送。");
     while (true) {
         console.log(new Date() + " 执行第" + loopCount + "次查询。");
-        console.log("执行OD_SSDPROG查询。" + new Date());
-        const fileName = await OD_SSDPROG();
-        console.log("执行OD_SSDPROG推送。" + new Date());
+
+        console.log("执行OD_SSDPROG_YOT_1查询。" + new Date());
+        const fileName = await OD_SSDPROG.work();
+        // 延迟 5 秒后执行上传
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log("执行OD_SSDPROG_YOT_1推送。" + new Date());
         await uploadFile(fileName);
 
-        // 延迟等待 9995 秒
-        await new Promise((resolve) => setTimeout(resolve, 9995000));
+        console.log("执行OD_SSDPROG_YOT_2查询。" + new Date());
+        fileName = await OD_SSDPROG.startAccessory();
+        // 延迟 5 秒后执行上传
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log("执行OD_SSDPROG_YOT_2推送。" + new Date());
+        await uploadFile(fileName);
+
+        console.log("执行OD_SSDPROG_YOT_3查询。" + new Date());
+        fileName = await OD_SSDPROG.startSendSample();
+        // 延迟 5 秒后执行上传
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log("执行OD_SSDPROG_YOT_3推送。" + new Date());
+        await uploadFile(fileName);
+
+        // 轮询等待
+        await new Promise((resolve) => setTimeout(resolve, (3600 * 1000)));
         loopCount++;
     }
 }
