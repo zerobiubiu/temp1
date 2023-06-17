@@ -2,66 +2,124 @@ const axios = require('axios');
 const csv = require('fast-csv');
 const fs = require('fs');
 
-async function fetchTaskDuration(task, orderNumber) {
-    const url = 'https://api.jiandaoyun.com/api/v4/app/612613ce863d82000717504f/entry/62232c96e110450007653d1f/data';
-    const config = {
-        headers: {
-            Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-        },
-    };
+async function checkTheArrivalTimeOfFabric(orderNumberArray) {
 
-    const requestData = {
-        limit: 100,
-        fields: [
-            '_widget_1638753006849',
-            '_widget_1638755556920'
-        ],
-        filter: {
-            rel: 'and',
-            cond: [
-                {
-                    field: '_widget_1638753006849',
-                    method: 'eq',
-                    value: orderNumber,
-                }
+    const screened_orderNumberArray = [];
+    const Data = [];
+    const csvData = [];
+
+    async function orderNumberScreened(orderNumber) {
+        const url = 'https://api.jiandaoyun.com/api/v4/app/612613ce863d82000717504f/entry/62edc36cf7a1f20008311e6f/data';
+        const config = {
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            },
+        };
+
+        const requestData = {
+            limit: 1,
+            fields: [
+                '_widget_1648175379567'
             ],
-        },
-    };
+            filter: {
+                rel: 'and',
+                cond: [
+                    {
+                        field: '_widget_1648175379567',
+                        method: 'eq',
+                        value: orderNumber,
+                    }
+                ],
+            },
+        };
 
+        try {
+            const response = await axios.post(url, requestData, config);
+            if (Object.entries(response.data.data).length !== 0) {
+                console.log(response.data.data[0]._widget_1648175379567);
+                screened_orderNumberArray.push(response.data.data[0]._widget_1648175379567);
+                // writeLogToFile("过滤后的订单号: " + response.data.data[0]._widget_1648175379567);
+            }
+        } catch (error) {
+            console.error('请求失败:', error);
+        }
+    }
 
-    try {
-        const response = await axios.post(url, requestData, config);
-        const responseData = response.data.data;
-        if (Object.entries(responseData).length !== 0) {
-            const filteredData = responseData.filter(obj => obj["_widget_1638755556920"].includes(Object.keys(task)[0]));
-            const result = filteredData.map(obj => obj["_id"]);
+    for (const orderNumber of orderNumberArray) {
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(orderNumberScreened(orderNumber));
+            }, 40);
+        });
+    }
 
-            if (Object.entries(result).length !== 0) {
+    async function fetchData(dataId) {
+        const url = 'https://api.jiandaoyun.com/api/v4/app/612613ce863d82000717504f/entry/631989b8d2ffb000088b8869/data';
+        const config = {
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            },
+        };
 
-                (async (dataId) => {
-                    console.log(dataId)
-                    const url = 'https://api.jiandaoyun.com/api/v4/app/612613ce863d82000717504f/entry/62232c96e110450007653d1f/data_retrieve';
-                    const config = {
-                        headers: {
-                            Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
-                            'Content-Type': 'application/json',
-                            Accept: 'application/json',
-                        },
-                    };
-                    const requestData = { data_id: dataId };
-                    console.log(JSON.stringify(requestData))
-                    const response = await axios.post(url, requestData, config);
-                    const responseData = response.data.data;
-                    // csvData.push(responseData['_widget_1638753006849'], Object.values(task)[0], responseData['_widget_1638759349849']);
-                    console.log("请求款号：" + responseData['_widget_1638753006849'] + "  请求项目：" + Object.values(task)[0] + "  获取时间：" + responseData['_widget_1638759349849']);
-                })(result[0]);
+        const requestData = {
+            limit: 100,
+            fields: [
+                '_widget_1662619824039',
+                '_widget_1648650452636',
+            ]
+        };
+
+        if (dataId) {
+            requestData.data_id = dataId;
+        }
+
+        try {
+            const response = await axios.post(url, requestData, config);
+            const responseData = response.data;
+
+            // 处理获取到的数据
+            responseData.data.forEach(async item => {
+                Data.push([{ _widget_1662619824039: item._widget_1662619824039 }, { _widget_1648650452636: item._widget_1648650452636 }, { data_id: item._id }]);
+            });
+
+            if (responseData.data.length === 100) {
+                const lastItem = responseData.data[responseData.data.length - 1];
+                const newDataId = lastItem._id;
+
+                await fetchData(newDataId);
+            } else {
+                return;
+            }
+        } catch (error) {
+            console.error('请求失败:', error);
+        }
+    }
+
+    await fetchData();
+
+    for (const orderNumber of screened_orderNumberArray) {
+        for (const data of Data) {
+            const widgetValue = data[0]._widget_1662619824039;
+            if (widgetValue && widgetValue.includes(orderNumber)) {
+                const value = data[1]._widget_1648650452636;
+                for (const Code of ['A101', 'A121', 'A122', 'A123']) {
+                    csvData.push([orderNumber, Code, value]);
+                }
+                continue;
             }
         }
-    } catch (error) {
-        console.error('请求失败:', error);
     }
+
+    return csvData;
 }
 
-fetchTaskDuration({ "船样": "A403" }, "WE23EC0516-1");
+(async () => {
+
+    const array = ["FO23103409", "YTM0495", "YTM0496", "qqqqqq"];
+
+    console.log(await checkTheArrivalTimeOfFabric(array));
+})();

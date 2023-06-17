@@ -2,7 +2,7 @@ const axios = require('axios');
 const csv = require('fast-csv');
 const fs = require('fs');
 
-module.exports = { work, startAccessory, startSendSample };
+module.exports = { work, startAccessory, startSendSample, startFabricArrival };
 
 // ====================== 通用函数 ========================
 
@@ -82,9 +82,8 @@ function writeCSVToFile(csvData) {
 
 // 返回符合条件的订单号
 async function order_attribution_inquiry() {
-    const idArray = [];
-    const order_number = [];
 
+    const order_number = [];
     async function fetchData(dataId) {
         const url = 'https://api.jiandaoyun.com/api/v4/app/612613ce863d82000717504f/entry/619ccfa6209a2e0008c75bc4/data';
         const config = {
@@ -100,6 +99,7 @@ async function order_attribution_inquiry() {
             fields: [
                 '_widget_1634804601451',
                 '_widget_1630838812092',
+                '_widget_1630838811229'
             ],
             filter: {
                 rel: 'and',
@@ -128,10 +128,13 @@ async function order_attribution_inquiry() {
 
             // 处理获取到的数据
             responseData.data.forEach(async item => {
-                const id = item._id;
-                idArray.push(id);
+                // const id = item._id;
+                // idArray.push(id);
 
-                writeLogToFile("符合的订单号: " + id);
+                // writeLogToFile("符合的data_id: " + id);
+                order_number.push(item._widget_1630838811229);
+                writeLogToFile("符合的订单号: " + item._widget_1630838811229);
+
             });
 
             if (responseData.data.length === 100) {
@@ -146,34 +149,7 @@ async function order_attribution_inquiry() {
             console.error('请求失败:', error);
         }
     }
-
-    async function orderNumberInquiry(data_id) {
-        const url = 'https://api.jiandaoyun.com/api/v4/app/612613ce863d82000717504f/entry/619ccfa6209a2e0008c75bc4/data_retrieve';
-        const config = {
-            headers: {
-                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-            },
-        };
-
-        const requestData = {
-            data_id: data_id
-        };
-
-        const response = await axios.post(url, requestData, config);
-        order_number.push(response.data.data._widget_1630838811229);
-    }
-
     await fetchData(null);
-
-    for (const id of idArray) {
-        await new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(orderNumberInquiry(id));
-            }, 40);
-        });
-    }
 
     return order_number;
 }
@@ -686,7 +662,6 @@ async function queryThePresetDeliveryDate(orderNumberArray) {
     return csvData;
 }
 
-
 // 启动函数
 async function startSendSample() {
     logTime();
@@ -696,6 +671,147 @@ async function startSendSample() {
 
     const orderNumberArray = await order_attribution_inquiry();
     const csvData = await queryThePresetDeliveryDate(orderNumberArray);
+    const filename = await writeCSVToFile(csvData);
+
+    writeLogToFile("---本次查询结束。---");
+    writeLogToFile(formatter.format(new Date()));
+
+    return filename;
+}
+
+
+// ====================== 面料时间 ========================
+
+// 查询面料日期
+async function checkTheArrivalTimeOfFabric(orderNumberArray) {
+
+    const screened_orderNumberArray = [];
+    const Data = [];
+    const csvData = [];
+
+    // 过滤未做计划的订单
+    async function orderNumberScreened(orderNumber) {
+        const url = 'https://api.jiandaoyun.com/api/v4/app/612613ce863d82000717504f/entry/62edc36cf7a1f20008311e6f/data';
+        const config = {
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            },
+        };
+
+        const requestData = {
+            limit: 1,
+            fields: [
+                '_widget_1648175379567'
+            ],
+            filter: {
+                rel: 'and',
+                cond: [
+                    {
+                        field: '_widget_1648175379567',
+                        method: 'eq',
+                        value: orderNumber,
+                    }
+                ],
+            },
+        };
+
+        try {
+            const response = await axios.post(url, requestData, config);
+            if (Object.entries(response.data.data).length !== 0) {
+                screened_orderNumberArray.push(response.data.data[0]._widget_1648175379567);
+                writeLogToFile("面料试算过的订单号: " + response.data.data[0]._widget_1648175379567);
+            }
+        } catch (error) {
+            console.error('请求失败:', error);
+        }
+    }
+
+    for (const orderNumber of orderNumberArray) {
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(orderNumberScreened(orderNumber));
+            }, 1);
+        });
+    }
+
+    // 读取全部采购计划
+    async function fetchData(dataId) {
+        const url = 'https://api.jiandaoyun.com/api/v4/app/612613ce863d82000717504f/entry/631989b8d2ffb000088b8869/data';
+        const config = {
+            headers: {
+                Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            },
+        };
+
+        const requestData = {
+            limit: 100,
+            fields: [
+                '_widget_1662619824039',
+                '_widget_1648650452636',
+            ]
+        };
+
+        if (dataId) {
+            requestData.data_id = dataId;
+        }
+
+        try {
+            const response = await axios.post(url, requestData, config);
+            const responseData = response.data;
+
+            // 处理获取到的数据
+            responseData.data.forEach(async item => {
+                Data.push([{ _widget_1662619824039: item._widget_1662619824039 }, { _widget_1648650452636: item._widget_1648650452636 }, { data_id: item._id }]);
+                writeLogToFile("读取到的数据: " + [JSON.stringify({ _widget_1662619824039: item._widget_1662619824039 }), JSON.stringify({ _widget_1648650452636: item._widget_1648650452636 }), JSON.stringify({ data_id: item._id })]);
+            });
+
+            if (responseData.data.length === 100) {
+                const lastItem = responseData.data[responseData.data.length - 1];
+                const newDataId = lastItem._id;
+
+                await fetchData(newDataId);
+            } else {
+                return;
+            }
+        } catch (error) {
+            console.error('请求失败:', error);
+        }
+    }
+    await fetchData();
+
+    // 读取采购计划中的订单时间
+    for (const orderNumber of screened_orderNumberArray) {
+        for (const data of Data) {
+            const widgetValue = data[0]._widget_1662619824039;
+            if (widgetValue && widgetValue.includes(orderNumber)) {
+                const value = data[1]._widget_1648650452636;
+                if (value !== null && value !== undefined && value !== '') {
+                    for (const Code of ['A101', 'A121', 'A122', 'A123']) {
+                        csvData.push([orderNumber, Code, value]);
+                        writeLogToFile("订单号: " + orderNumber + " 项目：" + Code + " 时间：" + value);
+                    }
+                }
+                continue;
+            }
+        }
+    }
+
+    return csvData;
+}
+
+// 启动
+async function startFabricArrival() {
+    logTime();
+
+    writeLogToFile("---开始获取数据并处理。---");
+    writeLogToFile(formatter.format(new Date()));
+
+    const orderNumberArray = await order_attribution_inquiry();
+    const csvData = await checkTheArrivalTimeOfFabric(orderNumberArray);
     const filename = await writeCSVToFile(csvData);
 
     writeLogToFile("---本次查询结束。---");

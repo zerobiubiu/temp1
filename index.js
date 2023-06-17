@@ -81,6 +81,13 @@ async function startInterval() {
         console.log("执行OD_SSDPROG_YOT_3推送。" + new Date());
         await uploadFile(fileName);
 
+        console.log("执行OD_SSDPROG_YOT_4查询。" + new Date());
+        fileName = await OD_SSDPROG.startFabricArrival();
+        // 延迟 5 秒后执行上传
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log("执行OD_SSDPROG_YOT_4推送。" + new Date());
+        await uploadFile(fileName);
+
         // 轮询等待
         await new Promise((resolve) => setTimeout(resolve, (3600 * 1000)));
         loopCount++;

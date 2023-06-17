@@ -4,7 +4,7 @@ const fs = require('fs');
 const OD_SSDPROG = require("./module/OD_SSDPROG");
 
 async function q(){
-    console.log(await OD_SSDPROG.startSendSample());
+    console.log(await OD_SSDPROG.startFabricArrival());
 }
 
 q();
