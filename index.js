@@ -1,5 +1,8 @@
 const Client = require('ssh2-sftp-client');
 const OD_SSDPROG = require('./module/OD_SSDPROG');
+const OD_SSDPROG_JIS = require('./module/OD_SSDPROG_JIS');
+const OD_SMPPROG_YOT = require("./module/OD_SMPPROG_YOT")
+const OD_SMPPROG_JIS = require("./module/OD_SMPPROG_JIT")
 
 // SFTP服务器配置
 const config = {
@@ -86,6 +89,49 @@ async function startInterval() {
         // 延迟 5 秒后执行上传
         await new Promise((resolve) => setTimeout(resolve, 5000));
         console.log("执行OD_SSDPROG_YOT_4推送。" + new Date());
+        await uploadFile(fileName);
+
+        console.log("执行OD_SMPPROG_YOT查询。" + new Date());
+        fileName = await OD_SMPPROG_YOT();
+        // 延迟 5 秒后执行上传
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log("执行OD_SMPPROG_YOT推送。" + new Date());
+        await uploadFile(fileName);
+
+        /////////
+        console.log("执行OD_SSDPROG_JIS_1查询。" + new Date());
+        fileName = await OD_SSDPROG_JIS.work();
+        // 延迟 5 秒后执行上传
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log("执行OD_SSDPROG_JIS_1推送。" + new Date());
+        await uploadFile(fileName);
+
+        console.log("执行OD_SSDPROG_JIS_2查询。" + new Date());
+        fileName = await OD_SSDPROG_JIS.startAccessory();
+        // 延迟 5 秒后执行上传
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log("执行OD_SSDPROG_JIS_2推送。" + new Date());
+        await uploadFile(fileName);
+
+        console.log("执行OD_SSDPROG_JIS_3查询。" + new Date());
+        fileName = await OD_SSDPROG_JIS.startSendSample();
+        // 延迟 5 秒后执行上传
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log("执行OD_SSDPROG_JIS_3推送。" + new Date());
+        await uploadFile(fileName);
+
+        console.log("执行OD_SSDPROG_JIS_4查询。" + new Date());
+        fileName = await OD_SSDPROG_JIS.startFabricArrival();
+        // 延迟 5 秒后执行上传
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log("执行OD_SSDPROG_JIS_4推送。" + new Date());
+        await uploadFile(fileName);
+
+        console.log("执行OD_SMPPROG_JIS查询。" + new Date());
+        fileName = await OD_SMPPROG_JIS();
+        // 延迟 5 秒后执行上传
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log("执行OD_SMPPROG_JIS推送。" + new Date());
         await uploadFile(fileName);
 
         // 轮询等待

@@ -31,7 +31,7 @@ function logTime() {
     const minutes = new Date().getMinutes().toString().padStart(2, '0');
     const seconds = new Date().getSeconds().toString().padStart(2, '0');
     const timestamp = `${year}.${month}.${day}_${hours}${minutes}${seconds}`;
-    logFilename = `OD_SSDPROG_YOT${timestamp}.log`;
+    logFilename = `OD_SSDPROG_JIS${timestamp}.log`;
     logFileDirPath = logLocalDirPath + logFilename;
 
     console.log("生成日志文件：" + logFileDirPath);
@@ -56,7 +56,7 @@ async function writeLogToFile(log) {
 // 将数据写入CSV文件的函数
 function writeCSVToFile(csvData) {
     const localDirPath = "./output/";
-    const filename = `OD_SSDPROG_YOT_${new Date().getFullYear().toString().slice(-2)}${(new Date().getMonth() + 1).toString().padStart(2, '0')}${new Date().getDate().toString().padStart(2, '0')}${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}${new Date().getSeconds().toString().padStart(2, '0')}.csv`;
+    const filename = `OD_SSDPROG_JIS_${new Date().getFullYear().toString().slice(-2)}${(new Date().getMonth() + 1).toString().padStart(2, '0')}${new Date().getDate().toString().padStart(2, '0')}${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}${new Date().getSeconds().toString().padStart(2, '0')}.csv`;
     const fileDirPath = localDirPath + filename;
 
     try {
@@ -177,7 +177,7 @@ async function startWork() {// 任务列表
     const minutes = new Date().getMinutes().toString().padStart(2, '0');
     const seconds = new Date().getSeconds().toString().padStart(2, '0');
     const timestamp = `${year}.${month}.${day}_${hours}${minutes}${seconds}`;
-    const filename = `OD_SSDPROG_YOT${timestamp}.log`;
+    const filename = `OD_SSDPROG_JIT${timestamp}.log`;
 
     // 日志文件路径
     const localDirPath = './logs/';
@@ -220,9 +220,11 @@ async function startWork() {// 任务列表
             const response = await axios.post(url, requestData, config);
             const responseData = response.data.data;
             // 将请求的数据存入csvData数组中
-            csvData.push([responseData['_widget_1647850075329'], Object.values(task)[0], responseData[Object.keys(task)[0]]]);
-            // 将请求的数据写入日志文件
-            writeLogToFile("请求款号：" + responseData['_widget_1647850075329'] + "  请求项目：" + Object.values(task)[0] + "  获取时间：" + responseData[Object.keys(task)[0]]);
+            if (new Date(responseData[Object.keys(task)[0]]) < new Date()) {
+                csvData.push([responseData['_widget_1647850075329'], Object.values(task)[0], responseData[Object.keys(task)[0]]]);
+                // 将请求的数据写入日志文件
+                writeLogToFile("请求款号：" + responseData['_widget_1647850075329'] + "  请求项目：" + Object.values(task)[0] + "  获取时间：" + responseData[Object.keys(task)[0]]);
+            }
         } catch (error) {
             console.error('请求失败:', error);
         }
@@ -340,7 +342,7 @@ async function startWork() {// 任务列表
     // 将数据写入CSV文件的函数
     function writeCSVToFile() {
         const localDirPath = "./output/";
-        const filename = `OD_SSDPROG_YOT_${new Date().getFullYear().toString().slice(-2)}${(new Date().getMonth() + 1).toString().padStart(2, '0')}${new Date().getDate().toString().padStart(2, '0')}${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}${new Date().getSeconds().toString().padStart(2, '0')}.csv`;
+        const filename = `OD_SSDPROG_JIT_${new Date().getFullYear().toString().slice(-2)}${(new Date().getMonth() + 1).toString().padStart(2, '0')}${new Date().getDate().toString().padStart(2, '0')}${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}${new Date().getSeconds().toString().padStart(2, '0')}.csv`;
         const fileDirPath = localDirPath + filename;
 
         try {
@@ -536,8 +538,10 @@ async function queryExpectedDateOfExcipients(orderNumberArray) {
             const response = await axios.post(url, requestData, config);
             const responseData = response.data.data;
 
-            csvData.push([responseData['_widget_1647849728187'], Object.values(task)[0], responseData._widget_1632640785036[0][Object.keys(task)[0]]]);
-            writeLogToFile("请求款号：" + responseData['_widget_1647849728187'] + "  请求项目：" + Object.values(task)[0] + "  获取时间：" + responseData._widget_1632640785036[0][Object.keys(task)[0]]);
+            if (new Date(responseData._widget_1632640785036[0][Object.keys(task)[0]]) < new Date()) {
+                csvData.push([responseData['_widget_1647849728187'], Object.values(task)[0], responseData._widget_1632640785036[0][Object.keys(task)[0]]]);
+                writeLogToFile("请求款号：" + responseData['_widget_1647849728187'] + "  请求项目：" + Object.values(task)[0] + "  获取时间：" + responseData._widget_1632640785036[0][Object.keys(task)[0]]);
+            }
         } catch (error) {
             console.error('请求失败:', error);
         }
@@ -638,8 +642,11 @@ async function queryThePresetDeliveryDate(orderNumberArray) {
                         const requestData = { data_id: dataId };
                         const response = await axios.post(url, requestData, config);
                         const responseData = response.data.data;
-                        csvData.push([responseData['_widget_1638753006849'], Object.values(task)[0], responseData['_widget_1638759349849']]);
-                        writeLogToFile("请求款号：" + responseData['_widget_1638753006849'] + "  请求项目：" + Object.values(task)[0] + "  获取时间：" + responseData['_widget_1638759349849']);
+
+                        if (new Date(responseData['_widget_1638759349849']) < new Date()) {
+                            csvData.push([responseData['_widget_1638753006849'], Object.values(task)[0], responseData['_widget_1638759349849']]);
+                            writeLogToFile("请求款号：" + responseData['_widget_1638753006849'] + "  请求项目：" + Object.values(task)[0] + "  获取时间：" + responseData['_widget_1638759349849']);
+                        }
                     })(result[0]);
                 }
             }
@@ -791,8 +798,10 @@ async function checkTheArrivalTimeOfFabric(orderNumberArray) {
                 const value = data[1]._widget_1648650452636;
                 if (value !== null && value !== undefined && value !== '') {
                     for (const Code of ['A101', 'A121', 'A122', 'A123']) {
-                        csvData.push([orderNumber, Code, value]);
-                        writeLogToFile("订单号: " + orderNumber + " 项目：" + Code + " 时间：" + value);
+                        if (new Date(value) < new Date()) {
+                            csvData.push([orderNumber, Code, value]);
+                            writeLogToFile("订单号: " + orderNumber + " 项目：" + Code + " 时间：" + value);
+                        }
                     }
                 }
                 continue;
