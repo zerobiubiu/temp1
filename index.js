@@ -5,13 +5,19 @@ const OD_SMPPROG_YOT = require("./module/OD_SMPPROG_YOT")
 const OD_SMPPROG_JIS = require("./module/OD_SMPPROG_JIT")
 
 // SFTP服务器配置
+// const config = {
+//     host: '120.27.20.169',
+//     port: '22',
+//     username: 'sftp',
+//     password: '1122'
+//     // username: 'root',
+//     // password: 'TGp6sJ7rKm'
+// };
 const config = {
-    host: '120.27.20.169',
+    host: '119.23.139.51',
     port: '22',
-    username: 'sftp',
-    password: '1122'
-    // username: 'root',
-    // password: 'TGp6sJ7rKm'
+    username: 'S59353018',
+    password: '88123456'
 };
 
 // 循环计数器
