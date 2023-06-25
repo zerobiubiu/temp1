@@ -4,11 +4,18 @@ const data_processing = require('./data');
 
 const sftp = new Client();
 
+// const config = {
+//     host: '120.27.20.169',
+//     port: '22',
+//     username: 'sftp',
+//     password: '1122'
+// };
+
 const config = {
-    host: '120.27.20.169',
+    host: '119.23.139.51',
     port: '22',
-    username: 'sftp',
-    password: '1122'
+    username: 'S59353018',
+    password: '88123456'
 };
 
 // 监听的远程目录路径
