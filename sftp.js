@@ -12,7 +12,7 @@ const sftp = new Client();
 // };
 
 const config = {
-    host: '119.23.139.51',
+    host: '119.23 .139.51',
     port: '22',
     username: 'S59353018',
     password: '88123456'
