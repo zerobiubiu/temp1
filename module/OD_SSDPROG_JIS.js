@@ -352,7 +352,7 @@ async function startWork() {// 任务列表
             return num.toString().padStart(2, '0');
         }
         const localDirPath = "./output/";
-        const filename = `OD_SSDRROG_JIS_${new Date().getFullYear().toString().slice(-2)}${(new Date().getMonth() + 1).toString().padStart(2, '0')}${new Date().getDate().toString().padStart(2, '0')}${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}${new Date().getSeconds().toString().padStart(2, '0')}.csv`;
+        const filename = `OD_SSDPROG_JIS_${new Date().getFullYear().toString().slice(-2)}${(new Date().getMonth() + 1).toString().padStart(2, '0')}${new Date().getDate().toString().padStart(2, '0')}${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}${new Date().getSeconds().toString().padStart(2, '0')}.csv`;
         const fileDirPath = localDirPath + filename;
 
         let csvContent = '';
