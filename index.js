@@ -2,7 +2,7 @@ const Client = require('ssh2-sftp-client');
 const OD_SSDPROG = require('./module/OD_SSDPROG');
 const OD_SSDPROG_JIS = require('./module/OD_SSDPROG_JIS');
 const OD_SMPPROG_YOT = require("./module/OD_SMPPROG_YOT")
-const OD_SMPPROG_JIS = require("./module/OD_SMPPROG_JIT")
+const OD_SMPPROG_JIS = require("./module/OD_SMPPROG_JIS")
 
 // SFTP服务器配置
 // const config = {
@@ -14,10 +14,14 @@ const OD_SMPPROG_JIS = require("./module/OD_SMPPROG_JIT")
 //     // password: 'TGp6sJ7rKm'
 // };
 const config = {
-    host: '119.23.139.51',
+    host: '47.98.46.251',
     port: '22',
     username: 'S59353018',
-    password: '88123456'
+    password: '88123456',
+    algorithms: {
+        kex: ['diffie-hellman-group1-sha1', 'diffie-hellman-group14-sha1'],
+        serverHostKey: ['ssh-rsa']
+    }
 };
 
 // 循环计数器
@@ -70,7 +74,7 @@ async function startInterval() {
         console.log(new Date() + " 执行第" + loopCount + "次查询。");
 
         console.log("执行OD_SSDPROG_YOT_1查询。" + new Date());
-        const fileName = await OD_SSDPROG.work();
+        let fileName = await OD_SSDPROG.work();
         // 延迟 5 秒后执行上传
         await new Promise((resolve) => setTimeout(resolve, 5000));
         console.log("执行OD_SSDPROG_YOT_1推送。" + new Date());
