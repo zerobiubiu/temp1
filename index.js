@@ -102,7 +102,7 @@ async function startInterval() {
         await uploadFile(fileName);
 
         console.log("执行OD_SMPPROG_YOT查询。" + new Date());
-        fileName = await OD_SMPPROG_YOT();
+        fileName = await OD_SMPPROG_YOT.start();
         // 延迟 5 秒后执行上传
         await new Promise((resolve) => setTimeout(resolve, 5000));
         console.log("执行OD_SMPPROG_YOT推送。" + new Date());
@@ -138,13 +138,14 @@ async function startInterval() {
         await uploadFile(fileName);
 
         console.log("执行OD_SMPPROG_JIS查询。" + new Date());
-        fileName = await OD_SMPPROG_JIS();
+        fileName = await OD_SMPPROG_JIS.start();
         // 延迟 5 秒后执行上传
         await new Promise((resolve) => setTimeout(resolve, 5000));
         console.log("执行OD_SMPPROG_JIS推送。" + new Date());
         await uploadFile(fileName);
 
         // 轮询等待
+        console.log(new Date() + " 轮询进入等待时间");
         await new Promise((resolve) => setTimeout(resolve, (3600 * 1000)));
         loopCount++;
     }

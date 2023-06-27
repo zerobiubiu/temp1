@@ -55,27 +55,34 @@ async function writeLogToFile(log) {
 
 // 将数据写入CSV文件的函数
 function writeCSVToFile(csvData) {
+    function padZero(num) {
+        return num.toString().padStart(2, '0');
+    }
     const localDirPath = "./output/";
     const filename = `OD_SSDPROG_JIS_${new Date().getFullYear().toString().slice(-2)}${(new Date().getMonth() + 1).toString().padStart(2, '0')}${new Date().getDate().toString().padStart(2, '0')}${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}${new Date().getSeconds().toString().padStart(2, '0')}.csv`;
     const fileDirPath = localDirPath + filename;
+
+    let csvContent = '';
+    for (const row of csvData) {
+        const date = new Date(row[row.length - 1]);
+        const formattedDate = `${date.getFullYear()}/${padZero(date.getMonth() + 1)}/${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
+        row[row.length - 1] = formattedDate;
+        csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
+    }
 
     try {
         if (!fs.existsSync(localDirPath)) {
             fs.mkdirSync(localDirPath, { recursive: true });
         }
 
-        const stream = fs.createWriteStream(fileDirPath);
-        csv.write(csvData, { headers: false })
-            .pipe(stream);
+        fs.writeFileSync(fileDirPath, csvContent, 'utf8');
 
-        stream.on('finish', () => {
-            writeLogToFile("---文件写入成功---");
-            writeLogToFile("文件地址：" + fileDirPath);
-        });
+        writeLogToFile("---文件写入成功---");
+        writeLogToFile("文件地址：" + fileDirPath);
 
         return filename;
     } catch (err) {
-        console.error('写入CSV文件时发生错误：', err);
+        console.error('写入 CSV 文件时发生错误：', err);
         return null;
     }
 }
@@ -177,7 +184,7 @@ async function startWork() {// 任务列表
     const minutes = new Date().getMinutes().toString().padStart(2, '0');
     const seconds = new Date().getSeconds().toString().padStart(2, '0');
     const timestamp = `${year}.${month}.${day}_${hours}${minutes}${seconds}`;
-    const filename = `OD_SSDPROG_JIT${timestamp}.log`;
+    const filename = `OD_SSDPROG_JIS${timestamp}.log`;
 
     // 日志文件路径
     const localDirPath = './logs/';
@@ -341,27 +348,34 @@ async function startWork() {// 任务列表
 
     // 将数据写入CSV文件的函数
     function writeCSVToFile() {
+        function padZero(num) {
+            return num.toString().padStart(2, '0');
+        }
         const localDirPath = "./output/";
-        const filename = `OD_SSDPROG_JIT_${new Date().getFullYear().toString().slice(-2)}${(new Date().getMonth() + 1).toString().padStart(2, '0')}${new Date().getDate().toString().padStart(2, '0')}${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}${new Date().getSeconds().toString().padStart(2, '0')}.csv`;
+        const filename = `OD_SSDRROG_JIS_${new Date().getFullYear().toString().slice(-2)}${(new Date().getMonth() + 1).toString().padStart(2, '0')}${new Date().getDate().toString().padStart(2, '0')}${new Date().getHours().toString().padStart(2, '0')}${new Date().getMinutes().toString().padStart(2, '0')}${new Date().getSeconds().toString().padStart(2, '0')}.csv`;
         const fileDirPath = localDirPath + filename;
+
+        let csvContent = '';
+        for (const row of csvData) {
+            const date = new Date(row[row.length - 1]);
+            const formattedDate = `${date.getFullYear()}/${padZero(date.getMonth() + 1)}/${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
+            row[row.length - 1] = formattedDate;
+            csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
+        }
 
         try {
             if (!fs.existsSync(localDirPath)) {
                 fs.mkdirSync(localDirPath, { recursive: true });
             }
 
-            const stream = fs.createWriteStream(fileDirPath);
-            csv.write(csvData, { headers: false })
-                .pipe(stream);
+            fs.writeFileSync(fileDirPath, csvContent, 'utf8');
 
-            stream.on('finish', () => {
-                writeLogToFile("---文件写入成功---");
-                writeLogToFile("文件地址：" + fileDirPath);
-            });
+            writeLogToFile("---文件写入成功---");
+            writeLogToFile("文件地址：" + fileDirPath);
 
             return filename;
         } catch (err) {
-            console.error('写入CSV文件时发生错误：', err);
+            console.error('写入 CSV 文件时发生错误：', err);
             return null;
         }
     }
