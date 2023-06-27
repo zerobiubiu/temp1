@@ -5,7 +5,7 @@ output/
 logs/
 
 # 依赖目录
-node_modules
+node_modules/
 
 # 环境变量文件
 .env
@@ -19,3 +19,6 @@ Thumbs.db
 
 # 测试文件
 test*
+
+# 文件缓存目录
+client_file/
