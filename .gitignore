@@ -19,6 +19,7 @@ Thumbs.db
 
 # 测试文件
 test*
+temp*
 
 # 文件缓存目录
 client_file/
