@@ -12,10 +12,15 @@ const sftp = new Client();
 // };
 
 const config = {
-    host: '119.23 .139.51',
+    // host: '119.23.139.51',
+    host: '47.98.46.251',
     port: '22',
     username: 'S59353018',
-    password: '88123456'
+    password: '88123456',
+    algorithms: {
+        kex: ['diffie-hellman-group1-sha1', 'diffie-hellman-group14-sha1'],
+        serverHostKey: ['ssh-rsa']
+    }
 };
 
 // 监听的远程目录路径
@@ -26,6 +31,7 @@ const localDirPath = './client_file/';
 let fileCache = [];
 
 // 是否是第一次扫描
+// let isFirstScan = true;
 let isFirstScan = true;
 
 // 连接到SFTP服务器
@@ -81,19 +87,19 @@ function handleNewFiles(files) {
                         setTimeout(() => data_processing.processID_SSD_KOJYO(localDirPath + file.name), 3000);
                         break;
                     case 'ID_SSD_ISP':
-                        setTimeout(()=>data_processing.processID_SSD_ISP(localDirPath + file.name),3000);
+                        setTimeout(() => data_processing.processID_SSD_ISP(localDirPath + file.name), 3000);
                         break;
                     case 'ID_SMP_CMT':
-                        setTimeout(()=>data_processing.processID_SMP_CMT(localDirPath + file.name),3000);
+                        setTimeout(() => data_processing.processID_SMP_CMT(localDirPath + file.name), 3000);
                         break;
                     case 'ID_SSD_CMT':
-                        setTimeout(()=>data_processing.processID_SSD_CMT(localDirPath + file.name),3000);
+                        setTimeout(() => data_processing.processID_SSD_CMT(localDirPath + file.name), 3000);
                         break;
                     case 'ID_SMPPROG_YOT':
-                        setTimeout(()=>data_processing.processID_SMPPROG_YOT(localDirPath + file.name),3000);
+                        setTimeout(() => data_processing.processID_SMPPROG_YOT(localDirPath + file.name), 3000);
                         break;
                     case 'ID_SSDPROG_YOT':
-                        setTimeout(()=>data_processing.processID_SSDPROG_YOT(localDirPath + file.name),3000);
+                        setTimeout(() => data_processing.processID_SSDPROG_YOT(localDirPath + file.name), 3000);
                         break;
                     default:
                         console.log("未知文件");
@@ -134,7 +140,16 @@ function executeProgram() {
     setInterval(checkDirectoryChanges, 5000); // 5秒钟检查一次
 }
 
-module.exports = {
-    connectToSFTP,
-    executeProgram
-};
+// module.exports = {
+//     connectToSFTP,
+//     executeProgram
+// };
+
+
+connectToSFTP()
+    .then(() => {
+        executeProgram();
+    })
+    .catch(err => {
+        console.error('连接SFTP服务器失败:', err);
+    });
