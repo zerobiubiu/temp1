@@ -4,6 +4,9 @@ const axios = require('axios');
 
 // 日期格式转换
 function convertToUTCDate(dateStr) {
+    if (!dateStr) {
+        return '';
+    }
     const date = new Date(dateStr);
     date.setUTCHours(date.getUTCHours() + 8);
     const formattedDate = date.toISOString();
@@ -150,17 +153,82 @@ function processID_SSDM_Deal(path) {
     });
 }
 
+// function processIM_ISP(path) {
+//     const results = [];
+//     const csvString = fs.readFileSync(path, 'utf-8');
+//     const csvStream = csv.parseString(csvString, { headers: false });
+
+//     csvStream.on('data', data => {
+//         results.push(data);
+//     });
+//     csvStream.on('end', () => {
+//         const data = {
+//             "data_list": results.map(row => {
+//                 const widget = {};
+//                 row.forEach((value, index) => {
+//                     widget["_widget_168671266992" + index] = {
+//                         "value": value
+//                     };
+//                 });
+//                 return widget;
+//             })
+//         };
+
+//         const config = {
+//             method: 'post',
+//             url: 'https://api.jiandaoyun.com/api/v1/app/612613ce863d82000717504f/entry/6489315d3036570008175d93/data_batch_create',
+//             headers: {
+//                 Authorization: 'Bearer e417xlhe7h99rF9KSCJMEQM6lNeG58mi',
+//                 'Content-Type': 'application/json',
+//                 Accept: '*/*',
+//                 Host: 'api.jiandaoyun.com',
+//                 Connection: 'keep-alive'
+//             },
+//             data
+//         };
+
+//         axios(config)
+//             .then(response => {
+//                 console.log(JSON.stringify(response.data));
+//             })
+//             .catch(error => {
+//                 console.log(error);
+//             });
+//     });
+// }
+
 function processIM_ISP(path) {
-    const results = [];
     const csvString = fs.readFileSync(path, 'utf-8');
     const csvStream = csv.parseString(csvString, { headers: false });
 
+    let results = [];
+    let batchCount = 0;
+
     csvStream.on('data', data => {
         results.push(data);
+
+        // 判断数据是否达到批次上限
+        if (results.length >= 100) {
+            // 发送批次数据
+            sendDataBatch(results, batchCount);
+
+            // 重置结果和计数器
+            results = [];
+            batchCount++;
+        }
     });
+
     csvStream.on('end', () => {
+        // 处理剩余的数据
+        if (results.length > 0) {
+            sendDataBatch(results, batchCount);
+        }
+    });
+
+
+    function sendDataBatch(dataBatch, batchCount) {
         const data = {
-            "data_list": results.map(row => {
+            "data_list": dataBatch.map(row => {
                 const widget = {};
                 row.forEach((value, index) => {
                     widget["_widget_168671266992" + index] = {
@@ -186,13 +254,14 @@ function processIM_ISP(path) {
 
         axios(config)
             .then(response => {
-                console.log(JSON.stringify(response.data));
+                console.log(`Batch ${batchCount} - Response:`, JSON.stringify(response.data));
             })
             .catch(error => {
-                console.log(error);
+                console.log(`Batch ${batchCount} - Error:`, error);
             });
-    });
 }
+
+
 
 function processIM_KOJYO(path) {
     const results = [];
@@ -295,7 +364,7 @@ function processID_SMP(path) {
     });
 }
 
-function processID_SSD_KOJYO(path){
+function processID_SSD_KOJYO(path) {
     const results = [];
     const csvString = fs.readFileSync(path, 'utf-8');
     const csvStream = csv.parseString(csvString, { headers: false });
@@ -339,7 +408,7 @@ function processID_SSD_KOJYO(path){
     });
 }
 
-function processID_SSD_ISP(path){
+function processID_SSD_ISP(path) {
     const results = [];
     const csvString = fs.readFileSync(path, 'utf-8');
     const csvStream = csv.parseString(csvString, { headers: false });
@@ -383,7 +452,7 @@ function processID_SSD_ISP(path){
     });
 }
 
-function processID_SMP_CMT(path){
+function processID_SMP_CMT(path) {
     const results = [];
     const csvString = fs.readFileSync(path, 'utf-8');
     const csvStream = csv.parseString(csvString, { headers: false });
@@ -427,7 +496,7 @@ function processID_SMP_CMT(path){
     });
 }
 
-function processID_SSD_CMT(path){
+function processID_SSD_CMT(path) {
     const results = [];
     const csvString = fs.readFileSync(path, 'utf-8');
     const csvStream = csv.parseString(csvString, { headers: false });
@@ -471,7 +540,7 @@ function processID_SSD_CMT(path){
     });
 }
 
-function processID_SMPPROG_YOT(path){
+function processID_SMPPROG_YOT(path) {
     const results = [];
     const csvString = fs.readFileSync(path, 'utf-8');
     const csvStream = csv.parseString(csvString, { headers: false });
@@ -514,7 +583,7 @@ function processID_SMPPROG_YOT(path){
     });
 }
 
-function processID_SSDPROG_YOT(path){
+function processID_SSDPROG_YOT(path) {
     const results = [];
     const csvString = fs.readFileSync(path, 'utf-8');
     const csvStream = csv.parseString(csvString, { headers: false });

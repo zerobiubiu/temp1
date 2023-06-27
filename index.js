@@ -131,7 +131,7 @@ async function executeProgram() {
     try {
         await connectToSFTP();
         checkDirectoryChanges();
-        setInterval(checkDirectoryChanges, 5000); // 5秒钟检查一次
+        setInterval(checkDirectoryChanges, 1000); // 5秒钟检查一次
     } catch (err) {
         console.error('连接SFTP服务器失败:', err);
     }
