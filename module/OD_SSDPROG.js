@@ -809,7 +809,7 @@ async function checkTheArrivalTimeOfFabric(orderNumberArray) {
                         writeLogToFile("订单号: " + orderNumber + " 项目：" + Code + " 时间：" + value);
                     }
                 }
-                continue;
+                break;
             }
         }
     }
@@ -833,3 +833,5 @@ async function startFabricArrival() {
 
     return filename;
 }
+
+startFabricArrival();

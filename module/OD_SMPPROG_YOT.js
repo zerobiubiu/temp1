@@ -260,14 +260,14 @@ async function DataTo_csvData() {
 
     async function To_csv(item) {
         if (item._widget_1638755556920 === "初次") {
-            csvData.push([item._widget_1638753006849, item._widget_1638753006899, "B101", item._widget_1638753008475]);
-            csvData.push([item._widget_1638753006849, item._widget_1638753006899, "B102", item._widget_1638753006870]);
+            csvData.push([item._widget_1638753006849, item._widget_1638753006899, "B101", item._widget_1638753006870]);
+            csvData.push([item._widget_1638753006849, item._widget_1638753006899, "B102", item._widget_1638753008475]);
         } else if (item._widget_1638755556920 === "一次修正") {
-            csvData.push([item._widget_1638753006849, item._widget_1638753006899, "B201", item._widget_1638753008475]);
-            csvData.push([item._widget_1638753006849, item._widget_1638753006899, "B202", item._widget_1638753006870]);
+            csvData.push([item._widget_1638753006849, item._widget_1638753006899, "B201", item._widget_1638753006870]);
+            csvData.push([item._widget_1638753006849, item._widget_1638753006899, "B202", item._widget_1638753008475]);
         } else if (item._widget_1638755556920 === "二次修正") {
-            csvData.push([item._widget_1638753006849, item._widget_1638753006899, "B301", item._widget_1638753008475]);
-            csvData.push([item._widget_1638753006849, item._widget_1638753006899, "B302", item._widget_1638753006870]);
+            csvData.push([item._widget_1638753006849, item._widget_1638753006899, "B301", item._widget_1638753006870]);
+            csvData.push([item._widget_1638753006849, item._widget_1638753006899, "B302", item._widget_1638753008475]);
         }
     }
 

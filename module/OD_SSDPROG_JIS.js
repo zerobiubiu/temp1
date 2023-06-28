@@ -818,7 +818,7 @@ async function checkTheArrivalTimeOfFabric(orderNumberArray) {
                         }
                     }
                 }
-                continue;
+                break;
             }
         }
     }
