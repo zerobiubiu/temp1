@@ -5,7 +5,7 @@ output/
 logs/
 
 # 依赖目录
-node_modules
+node_modules/
 
 # 环境变量文件
 .env
