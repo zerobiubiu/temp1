@@ -4,11 +4,13 @@
     "csv-writer": "^1.6.0",
     "fast-csv": "^4.3.6",
     "fs": "^0.0.1-security",
-    "ssh2-sftp-client": "^9.1.0"
+    "ssh2-sftp-client": "^9.1.0",
+    "typescript": "^5.1.6"
   },
   "devDependencies": {
     "@babel/core": "^7.22.1",
     "@babel/preset-env": "^7.22.4",
+    "@types/ssh2-sftp-client": "^9.0.0",
     "babel-loader": "^9.1.2",
     "webpack": "^5.85.0",
     "webpack-cli": "^5.1.1"

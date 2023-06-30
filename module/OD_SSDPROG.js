@@ -173,7 +173,8 @@ async function startWork() {// 任务列表
         { "_widget_1646226774552": "A351" },
         { "_widget_1646226774625": "A352" },
         { "_widget_1646226774625": "A353" },
-        { "_widget_1646226774762": "A361" }
+        { "_widget_1646226774762": "A361" },
+        { "_widget_1646226774762": "A362" }
     ];
 
     // 获取当前时间戳作为日志文件名
@@ -652,6 +653,9 @@ async function queryThePresetDeliveryDate(orderNumberArray) {
                         const requestData = { data_id: dataId };
                         const response = await axios.post(url, requestData, config);
                         const responseData = response.data.data;
+                        if (responseData['_widget_1638759349849'] === null) {
+                            return; // 结束函数
+                        }
                         csvData.push([responseData['_widget_1638753006849'], Object.values(task)[0], responseData['_widget_1638759349849']]);
                         writeLogToFile("请求款号：" + responseData['_widget_1638753006849'] + "  请求项目：" + Object.values(task)[0] + "  获取时间：" + responseData['_widget_1638759349849']);
                     })(result[0]);
@@ -666,8 +670,8 @@ async function queryThePresetDeliveryDate(orderNumberArray) {
     for (const orderNumber of orderNumberArray) {
         for (const task of taskList) {
             await new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve(fetchTaskDuration(task, orderNumber));
+                setTimeout(async() => {
+                    resolve(await fetchTaskDuration(task, orderNumber));
                 }, 40);
             });
         }
@@ -685,6 +689,7 @@ async function startSendSample() {
 
     const orderNumberArray = await order_attribution_inquiry();
     const csvData = await queryThePresetDeliveryDate(orderNumberArray);
+    await new Promise((resolve) => {setTimeout(async() => {resolve();}, 400);});
     const filename = await writeCSVToFile(csvData);
 
     writeLogToFile("---本次查询结束。---");
@@ -833,5 +838,3 @@ async function startFabricArrival() {
 
     return filename;
 }
-
-startFabricArrival();
